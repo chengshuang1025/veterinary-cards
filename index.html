@@ -219,7 +219,36 @@
     .tab-nav, .print-bar, .page-title, .page-sub { display: none; }
     .card { display: block !important; box-shadow: none; page-break-after: always; max-width: 100%; margin-bottom: 0; }
   }
-</style>
+
+  @media print {
+    @page { size: A4 portrait; margin: 10mm 12mm; }
+    body { background: white; padding: 0; margin: 0; font-size: 11px; }
+    .tab-nav, .print-bar, .page-title, .page-sub { display: none !important; }
+    .card { display: block !important; box-shadow: none !important; border: 1.5px solid #e5e7eb; border-radius: 12px; padding: 10mm 10mm 8mm; margin: 0; page-break-after: always; page-break-inside: avoid; max-width: 100%; box-sizing: border-box; }
+    .card:last-of-type { page-break-after: auto; }
+    .card img { max-height: 200px !important; max-width: 100% !important; width: auto !important; display: block; margin: 0 auto 8px; border-radius: 8px; }
+    .card-header { margin-bottom: 10px !important; padding-bottom: 8px !important; }
+    .card-num { width: 32px !important; height: 32px !important; font-size: 13px !important; }
+    .card-title { font-size: 15px !important; }
+    .card-diff { font-size: 10px !important; }
+    .two-col { gap: 8px !important; margin-bottom: 6px !important; }
+    .box { padding: 8px 10px !important; margin-bottom: 6px !important; border-radius: 8px !important; }
+    .box-title { font-size: 11px !important; margin-bottom: 4px !important; }
+    .parts-grid, .bone-grid, .condition-grid, .organ-grid { gap: 4px !important; }
+    .part-item, .bone-item, .condition-item, .organ-item { font-size: 10px !important; padding: 3px 6px !important; }
+    .condition-item { padding: 5px 7px !important; }
+    .condition-title { font-size: 10px !important; margin-bottom: 2px !important; }
+    .step-row { font-size: 10px !important; margin-bottom: 4px !important; line-height: 1.4 !important; }
+    .step-badge { width: 18px !important; height: 18px !important; font-size: 9px !important; flex-shrink: 0; }
+    .feat-item { font-size: 10px !important; margin-bottom: 3px !important; }
+    .feat-num { width: 16px !important; height: 16px !important; font-size: 9px !important; }
+    .tax-row { font-size: 10px !important; padding: 1px 0 !important; }
+    .warn-box { padding: 7px 10px !important; margin-top: 6px !important; font-size: 10px !important; border-radius: 8px !important; }
+    div[style*="border-top:2px dashed"] { margin: 8px 0 !important; }
+    .speech-bubble { font-size: 10px !important; padding: 8px 10px 8px !important; margin: 6px 0 !important; }
+    div[style*="text-align:center"] { margin-bottom: 6px !important; }
+    #fish-game { display: none !important; }
+  }</style>
 </head>
 <body>
 
@@ -286,6 +315,31 @@
       <div class="feat-item"><span class="feat-num" style="background:#22c55e;">3</span>依靠鰭在水中游動。</div>
       <div class="feat-item"><span class="feat-num" style="background:#22c55e;">4</span>體溫隨環境改變（變溫動物）。</div>
       <div class="feat-item"><span class="feat-num" style="background:#22c55e;">5</span>魚是地球上最早出現的脊椎動物之一！</div>
+    </div>
+  </div>
+
+  <!-- ===== 小遊戲：找找看 ===== -->
+  <div id="fish-game" style="margin-top:20px; border-radius:20px; background:linear-gradient(135deg,#e0f2fe,#bae6fd); padding:18px; border:2px solid #7dd3fc;">
+    <div style="text-align:center; margin-bottom:14px;">
+      <div style="font-size:18px; font-weight:900; color:#0369a1;">🎮 小遊戲：找找看！魚身上的秘密</div>
+      <div style="font-size:12px; color:#0c4a6e; margin-top:4px;">點一點圖片上正確的部位！</div>
+    </div>
+    <div id="fish-game-wrap" style="position:relative; display:inline-block; width:100%; text-align:center;">
+      <img id="fish-game-img" src="" alt="魚類構造遊戲圖" style="max-width:100%; border-radius:12px; display:block; margin:0 auto;">
+      <div class="fish-dot-marker" data-id="eye"    style="left:16%; top:25%;"></div>
+      <div class="fish-dot-marker" data-id="gill"   style="left:27%; top:27%;"></div>
+      <div class="fish-dot-marker" data-id="dorsal" style="left:63%; top:17%;"></div>
+      <div class="fish-dot-marker" data-id="tail"   style="left:86%; top:36%;"></div>
+      <div class="fish-dot-marker" data-id="gut"    style="left:52%; top:67%;"></div>
+    </div>
+    <div id="fish-q-box" style="display:none; margin-top:14px; background:white; border-radius:14px; padding:14px 16px; text-align:center; box-shadow:0 2px 10px rgba(0,0,0,0.1);">
+      <div id="fish-progress" style="font-size:11px; color:#64748b; margin-bottom:6px;"></div>
+      <div id="fish-question" style="font-size:16px; font-weight:800; color:#0c4a6e; line-height:1.5;"></div>
+      <div id="fish-feedback" style="font-size:14px; font-weight:700; margin-top:8px; min-height:24px;"></div>
+    </div>
+    <div style="text-align:center; margin-top:14px;">
+      <button id="fish-start-btn" onclick="fishGameStart()" style="background:#0369a1; color:white; border:none; border-radius:20px; padding:10px 28px; font-size:15px; font-weight:800; cursor:pointer; font-family:inherit;">🐟 開始遊戲！</button>
+      <button id="fish-reset-btn" onclick="fishGameStart()" style="display:none; background:#6b7280; color:white; border:none; border-radius:20px; padding:8px 20px; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit; margin-left:8px;">🔄 再玩一次</button>
     </div>
   </div>
 </div>
@@ -750,7 +804,36 @@
   animation: swimAcross 4s linear forwards;
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
 }
-</style>
+
+  @media print {
+    @page { size: A4 portrait; margin: 10mm 12mm; }
+    body { background: white; padding: 0; margin: 0; font-size: 11px; }
+    .tab-nav, .print-bar, .page-title, .page-sub { display: none !important; }
+    .card { display: block !important; box-shadow: none !important; border: 1.5px solid #e5e7eb; border-radius: 12px; padding: 10mm 10mm 8mm; margin: 0; page-break-after: always; page-break-inside: avoid; max-width: 100%; box-sizing: border-box; }
+    .card:last-of-type { page-break-after: auto; }
+    .card img { max-height: 200px !important; max-width: 100% !important; width: auto !important; display: block; margin: 0 auto 8px; border-radius: 8px; }
+    .card-header { margin-bottom: 10px !important; padding-bottom: 8px !important; }
+    .card-num { width: 32px !important; height: 32px !important; font-size: 13px !important; }
+    .card-title { font-size: 15px !important; }
+    .card-diff { font-size: 10px !important; }
+    .two-col { gap: 8px !important; margin-bottom: 6px !important; }
+    .box { padding: 8px 10px !important; margin-bottom: 6px !important; border-radius: 8px !important; }
+    .box-title { font-size: 11px !important; margin-bottom: 4px !important; }
+    .parts-grid, .bone-grid, .condition-grid, .organ-grid { gap: 4px !important; }
+    .part-item, .bone-item, .condition-item, .organ-item { font-size: 10px !important; padding: 3px 6px !important; }
+    .condition-item { padding: 5px 7px !important; }
+    .condition-title { font-size: 10px !important; margin-bottom: 2px !important; }
+    .step-row { font-size: 10px !important; margin-bottom: 4px !important; line-height: 1.4 !important; }
+    .step-badge { width: 18px !important; height: 18px !important; font-size: 9px !important; flex-shrink: 0; }
+    .feat-item { font-size: 10px !important; margin-bottom: 3px !important; }
+    .feat-num { width: 16px !important; height: 16px !important; font-size: 9px !important; }
+    .tax-row { font-size: 10px !important; padding: 1px 0 !important; }
+    .warn-box { padding: 7px 10px !important; margin-top: 6px !important; font-size: 10px !important; border-radius: 8px !important; }
+    div[style*="border-top:2px dashed"] { margin: 8px 0 !important; }
+    .speech-bubble { font-size: 10px !important; padding: 8px 10px 8px !important; margin: 6px 0 !important; }
+    div[style*="text-align:center"] { margin-bottom: 6px !important; }
+    #fish-game { display: none !important; }
+  }</style>
 <script>
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -801,5 +884,125 @@
     }
   });
 </script>
-</body>
+
+<style>
+.fish-dot-marker{position:absolute;width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,0.9);border:3px solid #0369a1;transform:translate(-50%,-50%);cursor:pointer;display:none;box-shadow:0 0 0 4px rgba(3,105,161,0.25);animation:dotPulse 1.2s ease-in-out infinite;z-index:10;}
+@keyframes dotPulse{0%,100%{box-shadow:0 0 0 4px rgba(3,105,161,0.25);}50%{box-shadow:0 0 0 8px rgba(3,105,161,0.1);}}
+.fish-dot-marker.dot-wrong{background:#fca5a5;border-color:#ef4444;animation:dotShake 0.4s ease;}
+.fish-dot-marker.dot-correct{background:#86efac;border-color:#16a34a;animation:none;}
+@keyframes dotShake{0%,100%{transform:translate(-50%,-50%);}25%{transform:translate(calc(-50% - 5px),-50%);}75%{transform:translate(calc(-50% + 5px),-50%);}}
+.fish-star{position:fixed;pointer-events:none;z-index:9999;font-size:28px;animation:starFloat 1s ease-out forwards;}
+@keyframes starFloat{0%{opacity:1;transform:translateY(0) scale(1);}100%{opacity:0;transform:translateY(-80px) scale(1.5);}}
+</style>
+<script>
+(function(){
+  const questions=[
+    {id:'eye',   q:'👀 魚用什麼來看東西？點點看正確的部位！',ok:'正確！魚的眼睛和人一樣用來看東西 👀'},
+    {id:'gill',  q:'💨 魚沒有肺，牠用什麼呼吸？找一找！',   ok:'答對了！魚鰓可以從水裡取得氧氣 🌊'},
+    {id:'dorsal',q:'🦈 魚背上那片「鰭」叫什麼？點點看！',   ok:'讚！背鰭幫助魚保持平衡不翻倒 🐟'},
+    {id:'tail',  q:'🏊 魚靠哪個部位在水裡游動最快？',       ok:'超棒！尾鰭就像魚的引擎，推動牠前進 💨'},
+    {id:'gut',   q:'🍽️ 魚肚子裡幫助消化食物的器官在哪裡？',ok:'答對！魚的腸負責消化和吸收營養 ✨'},
+  ];
+  let current=0,score=0,gameActive=false;
+  window.addEventListener('DOMContentLoaded',()=>{
+    const m=document.querySelector('img[alt="魚類構造示意圖"]');
+    const g=document.getElementById('fish-game-img');
+    if(m&&g)g.src=m.src;
+  });
+  function getDots(){return document.querySelectorAll('.fish-dot-marker');}
+  function soundCorrect(){
+    const ctx=new(window.AudioContext||window.webkitAudioContext)();
+    [0,80,160].forEach(d=>{setTimeout(()=>{
+      const o=ctx.createOscillator(),g=ctx.createGain();
+      o.connect(g);g.connect(ctx.destination);
+      const f=500+Math.random()*400;
+      o.frequency.setValueAtTime(f,ctx.currentTime);
+      o.frequency.exponentialRampToValueAtTime(f*1.6,ctx.currentTime+0.1);
+      g.gain.setValueAtTime(0.15,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.15);
+      o.start(ctx.currentTime);o.stop(ctx.currentTime+0.15);
+    },d);});
+    setTimeout(()=>ctx.close(),500);
+  }
+  function soundWrong(){
+    const ctx=new(window.AudioContext||window.webkitAudioContext)();
+    const o=ctx.createOscillator(),g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);o.type='sawtooth';
+    o.frequency.setValueAtTime(180,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(100,ctx.currentTime+0.25);
+    g.gain.setValueAtTime(0.12,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.25);
+    o.start(ctx.currentTime);o.stop(ctx.currentTime+0.25);setTimeout(()=>ctx.close(),400);
+  }
+  function soundFireworks(){
+    const ctx=new(window.AudioContext||window.webkitAudioContext)();
+    const notes=[523,587,659,698,784,880,988,1047,1047,1319];
+    const times=[0,0.13,0.26,0.39,0.52,0.65,0.78,0.91,1.05,1.05];
+    const durs=[0.12,0.12,0.12,0.12,0.12,0.12,0.12,0.18,0.18,0.5];
+    notes.forEach((freq,i)=>{
+      const o=ctx.createOscillator(),g=ctx.createGain();
+      o.connect(g);g.connect(ctx.destination);o.type='sine';o.frequency.value=freq;
+      const t=ctx.currentTime+times[i];
+      g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(0.18,t+0.02);
+      g.gain.exponentialRampToValueAtTime(0.001,t+durs[i]);
+      o.start(t);o.stop(t+durs[i]+0.05);
+    });
+    [1047,1319,1568].forEach((freq,i)=>{
+      const o=ctx.createOscillator(),g=ctx.createGain();
+      o.connect(g);g.connect(ctx.destination);o.type='sine';o.frequency.value=freq;
+      const t=ctx.currentTime+1.55+i*0.08;
+      g.gain.setValueAtTime(0.12,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.6);
+      o.start(t);o.stop(t+0.65);
+    });
+    setTimeout(()=>ctx.close(),2500);
+  }
+  function showQuestion(){
+    const q=questions[current];
+    document.getElementById('fish-progress').textContent=`第 ${current+1} / ${questions.length} 題`;
+    document.getElementById('fish-question').textContent=q.q;
+    document.getElementById('fish-feedback').textContent='';
+    getDots().forEach(d=>{d.style.display='block';d.classList.remove('dot-wrong','dot-correct');});
+  }
+  window.fishGameStart=function(){
+    current=0;score=0;gameActive=true;
+    document.getElementById('fish-start-btn').style.display='none';
+    document.getElementById('fish-reset-btn').style.display='none';
+    document.getElementById('fish-q-box').style.display='block';
+    showQuestion();
+  };
+  function spawnStars(x,y){
+    ['⭐','✨','🌟'].forEach((s,i)=>{
+      const el=document.createElement('div');el.className='fish-star';el.textContent=s;
+      el.style.left=(x+(i-1)*30)+'px';el.style.top=y+'px';
+      document.body.appendChild(el);setTimeout(()=>el.remove(),1000);
+    });
+  }
+  document.addEventListener('click',function(e){
+    const dot=e.target.closest('.fish-dot-marker');
+    if(!dot||!gameActive)return;
+    const q=questions[current];
+    if(dot.dataset.id===q.id){
+      dot.classList.add('dot-correct');
+      getDots().forEach(d=>{if(d!==dot)d.style.display='none';});
+      score++;soundCorrect();
+      document.getElementById('fish-feedback').innerHTML=`<span style="color:#16a34a">🎉 ${q.ok}</span>`;
+      spawnStars(e.clientX,e.clientY);
+      setTimeout(()=>{
+        current++;
+        if(current<questions.length){showQuestion();}
+        else{
+          gameActive=false;soundFireworks();
+          getDots().forEach(d=>d.style.display='none');
+          document.getElementById('fish-question').textContent='';
+          document.getElementById('fish-progress').textContent='';
+          const msg=score===questions.length?'🏆 你真棒！挑戰下一個專業吧！':`✅ 答對 ${score} / ${questions.length} 題，再練習看看吧！`;
+          document.getElementById('fish-feedback').innerHTML=`<span style="color:#0369a1;font-size:16px;">${msg}</span>`;
+          document.getElementById('fish-reset-btn').style.display='inline-block';
+        }
+      },1200);
+    }else{
+      soundWrong();dot.classList.add('dot-wrong');
+      document.getElementById('fish-feedback').innerHTML=`<span style="color:#ef4444">❌ 再試一次！</span>`;
+      setTimeout(()=>dot.classList.remove('dot-wrong'),500);
+    }
+  });
+})();
+</script></body>
 </html>
