@@ -214,10 +214,52 @@
   .print-btn.primary { background: #3a7bd5; color: white; }
   .print-btn.secondary { background: #f1f5f9; color: #475569; }
 
+
+  /* ===== 手機版優化 ===== */
+  @media screen and (max-width: 600px) {
+    body { padding: 10px; }
+    .page-title { font-size: 19px; }
+    .page-sub { font-size: 12px; }
+    .tab-nav { gap: 6px; margin-bottom: 16px; }
+    .tab-btn { padding: 7px 12px; font-size: 12px; }
+    .card { padding: 16px; border-radius: 18px; }
+    .card-title { font-size: 17px; }
+    .two-col { gap: 12px; }
+    .two-col > * { min-width: 100%; }
+    .box { padding: 12px; }
+    .parts-grid, .bone-grid, .condition-grid, .organ-grid { gap: 6px; }
+    .card img { border-radius: 12px; }
+    /* 遊戲區在手機上左右欄改直排 */
+    #cat-board > div[style*="display:flex"] { flex-direction: column !important; }
+    .print-bar { flex-direction: column; align-items: center; }
+    .print-btn { width: 100%; max-width: 280px; justify-content: center; }
+  }
+
   @media print {
     body { background: white; padding: 0; }
     .tab-nav, .print-bar, .page-title, .page-sub { display: none; }
     .card { display: block !important; box-shadow: none; page-break-after: always; max-width: 100%; margin-bottom: 0; }
+  }
+
+
+  /* ===== 手機版優化 ===== */
+  @media screen and (max-width: 600px) {
+    body { padding: 10px; }
+    .page-title { font-size: 19px; }
+    .page-sub { font-size: 12px; }
+    .tab-nav { gap: 6px; margin-bottom: 16px; }
+    .tab-btn { padding: 7px 12px; font-size: 12px; }
+    .card { padding: 16px; border-radius: 18px; }
+    .card-title { font-size: 17px; }
+    .two-col { gap: 12px; }
+    .two-col > * { min-width: 100%; }
+    .box { padding: 12px; }
+    .parts-grid, .bone-grid, .condition-grid, .organ-grid { gap: 6px; }
+    .card img { border-radius: 12px; }
+    /* 遊戲區在手機上左右欄改直排 */
+    #cat-board > div[style*="display:flex"] { flex-direction: column !important; }
+    .print-bar { flex-direction: column; align-items: center; }
+    .print-btn { width: 100%; max-width: 280px; justify-content: center; }
   }
 
   @media print {
@@ -951,6 +993,27 @@
   animation: swimAcross 4s linear forwards;
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
 }
+
+
+  /* ===== 手機版優化 ===== */
+  @media screen and (max-width: 600px) {
+    body { padding: 10px; }
+    .page-title { font-size: 19px; }
+    .page-sub { font-size: 12px; }
+    .tab-nav { gap: 6px; margin-bottom: 16px; }
+    .tab-btn { padding: 7px 12px; font-size: 12px; }
+    .card { padding: 16px; border-radius: 18px; }
+    .card-title { font-size: 17px; }
+    .two-col { gap: 12px; }
+    .two-col > * { min-width: 100%; }
+    .box { padding: 12px; }
+    .parts-grid, .bone-grid, .condition-grid, .organ-grid { gap: 6px; }
+    .card img { border-radius: 12px; }
+    /* 遊戲區在手機上左右欄改直排 */
+    #cat-board > div[style*="display:flex"] { flex-direction: column !important; }
+    .print-bar { flex-direction: column; align-items: center; }
+    .print-btn { width: 100%; max-width: 280px; justify-content: center; }
+  }
 
   @media print {
     @page { size: A4 portrait; margin: 10mm 12mm; }
