@@ -417,6 +417,26 @@
       </div>
     </div>
   </div>
+
+  <!-- ===== 小遊戲：貓咪器官配對 ===== -->
+  <div id="cat-game" style="margin-top:20px; border-radius:20px; background:linear-gradient(135deg,#f5f3ff,#ddd6fe); padding:18px; border:2px solid #c4b5fd;">
+    <div style="text-align:center; margin-bottom:14px;">
+      <div style="font-size:18px; font-weight:900; color:#6d28d9;">🎮 小遊戲：貓咪身體配對王</div>
+      <div style="font-size:12px; color:#5b21b6; margin-top:4px;">小貓咪想知道自己的身體有什麼本領～<br>把「器官」和「工作」配成一對吧 💕</div>
+    </div>
+    <div id="cat-board" style="display:none;">
+      <div style="font-size:12px; font-weight:800; color:#6d28d9; margin-bottom:8px; text-align:center;">👇 先點一個器官，再點牠的工作</div>
+      <div style="display:flex; gap:12px;">
+        <div id="cat-col-left" style="flex:1; display:flex; flex-direction:column; gap:8px;"></div>
+        <div id="cat-col-right" style="flex:1; display:flex; flex-direction:column; gap:8px;"></div>
+      </div>
+    </div>
+    <div id="cat-feedback" style="text-align:center; font-size:15px; font-weight:800; margin-top:12px; min-height:26px;"></div>
+    <div style="text-align:center; margin-top:10px;">
+      <button id="cat-start-btn" onclick="catGameStart()" style="background:#6d28d9; color:white; border:none; border-radius:20px; padding:10px 28px; font-size:15px; font-weight:800; cursor:pointer; font-family:inherit; box-shadow:0 3px 10px rgba(109,40,217,0.3);">🐱 開始配對！</button>
+      <button id="cat-reset-btn" onclick="catGameStart()" style="display:none; background:#6b7280; color:white; border:none; border-radius:20px; padding:8px 20px; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit;">🔄 再玩一次</button>
+    </div>
+  </div>
 </div>
 
 <!-- ===== CARD 3: TURTLE SHELL ===== -->
@@ -1243,6 +1263,82 @@
       }
     }, 1600);
   };
+})();
+</script>
+<style>
+@media print { #cat-game { display:none !important; } }
+.cat-card { background:white; border:2px solid #c4b5fd; border-radius:12px; padding:10px 8px; font-size:13px; color:#5b21b6; cursor:pointer; text-align:center; font-family:inherit; font-weight:700; line-height:1.4; transition:all 0.15s; }
+.cat-card:hover { transform:translateY(-2px); box-shadow:0 4px 12px rgba(109,40,217,0.2); }
+.cat-card.sel { background:#ede9fe; border-color:#7c3aed; box-shadow:0 0 0 3px rgba(124,58,237,0.25); }
+.cat-card.matched { background:#dcfce7; border-color:#16a34a; color:#15803d; cursor:default; opacity:0.7; }
+.cat-card.wrong { animation:catShake 0.4s ease; border-color:#ef4444; background:#fee2e2; }
+@keyframes catShake { 0%,100%{transform:translateX(0);}25%{transform:translateX(-5px);}75%{transform:translateX(5px);} }
+</style>
+<script>
+(function(){
+  const pairs = [
+    { organ:'👀 眼睛', job:'在黑漆漆的夜裡也看得見' },
+    { organ:'👂 耳朵', job:'轉來轉去聽見小老鼠的聲音' },
+    { organ:'👅 舌頭', job:'粗粗的用來喝水和洗澡' },
+    { organ:'🦴 骨骼', job:'撐起身體，讓貓咪跳得又高又遠' },
+    { organ:'🫀 心臟', job:'噗通噗通把血液送到全身' },
+  ];
+  let sel=null, matched=0, active=false;
+
+  function sndOK(){const c=new(window.AudioContext||window.webkitAudioContext)();[0,80,160].forEach(d=>{setTimeout(()=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);const f=500+Math.random()*400;o.frequency.setValueAtTime(f,c.currentTime);o.frequency.exponentialRampToValueAtTime(f*1.6,c.currentTime+0.1);g.gain.setValueAtTime(0.15,c.currentTime);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.15);o.start(c.currentTime);o.stop(c.currentTime+0.15);},d);});setTimeout(()=>c.close(),500);}
+  function sndNo(){const c=new(window.AudioContext||window.webkitAudioContext)();const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sawtooth';o.frequency.setValueAtTime(180,c.currentTime);o.frequency.exponentialRampToValueAtTime(100,c.currentTime+0.25);g.gain.setValueAtTime(0.12,c.currentTime);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.25);o.start(c.currentTime);o.stop(c.currentTime+0.25);setTimeout(()=>c.close(),400);}
+  function sndWin(){const c=new(window.AudioContext||window.webkitAudioContext)();const n=[523,587,659,698,784,880,988,1047,1047,1319],t=[0,0.13,0.26,0.39,0.52,0.65,0.78,0.91,1.05,1.05],d=[0.12,0.12,0.12,0.12,0.12,0.12,0.12,0.18,0.18,0.5];n.forEach((f,i)=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sine';o.frequency.value=f;const tt=c.currentTime+t[i];g.gain.setValueAtTime(0,tt);g.gain.linearRampToValueAtTime(0.18,tt+0.02);g.gain.exponentialRampToValueAtTime(0.001,tt+d[i]);o.start(tt);o.stop(tt+d[i]+0.05);});[1047,1319,1568].forEach((f,i)=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sine';o.frequency.value=f;const tt=c.currentTime+1.55+i*0.08;g.gain.setValueAtTime(0.12,tt);g.gain.exponentialRampToValueAtTime(0.001,tt+0.6);o.start(tt);o.stop(tt+0.65);});setTimeout(()=>c.close(),2500);}
+
+  window.catGameStart=function(){
+    sel=null; matched=0; active=true;
+    document.getElementById('cat-start-btn').style.display='none';
+    document.getElementById('cat-reset-btn').style.display='none';
+    document.getElementById('cat-feedback').textContent='';
+    document.getElementById('cat-board').style.display='block';
+    const left=document.getElementById('cat-col-left');
+    const right=document.getElementById('cat-col-right');
+    left.innerHTML=''; right.innerHTML='';
+    const organs=pairs.map((p,i)=>({txt:p.organ,id:i})).sort(()=>Math.random()-0.5);
+    const jobs=pairs.map((p,i)=>({txt:p.job,id:i})).sort(()=>Math.random()-0.5);
+    organs.forEach(o=>{ left.appendChild(mkCard(o.txt,o.id,'organ')); });
+    jobs.forEach(j=>{ right.appendChild(mkCard(j.txt,j.id,'job')); });
+  };
+
+  function mkCard(txt,id,type){
+    const el=document.createElement('div');
+    el.className='cat-card'; el.textContent=txt;
+    el.dataset.id=id; el.dataset.type=type;
+    el.addEventListener('click',()=>pick(el));
+    return el;
+  }
+
+  function pick(el){
+    if(!active || el.classList.contains('matched')) return;
+    if(!sel){ sel=el; el.classList.add('sel'); return; }
+    if(sel===el){ el.classList.remove('sel'); sel=null; return; }
+    if(sel.dataset.type===el.dataset.type){ // 同一欄，改選
+      sel.classList.remove('sel'); sel=el; el.classList.add('sel'); return;
+    }
+    // 配對判定
+    if(sel.dataset.id===el.dataset.id){
+      sndOK();
+      sel.classList.remove('sel'); sel.classList.add('matched'); el.classList.add('matched');
+      matched++;
+      document.getElementById('cat-feedback').innerHTML='<span style="color:#16a34a;">✨ 配對成功！好厲害！</span>';
+      sel=null;
+      if(matched>=pairs.length){
+        active=false; sndWin();
+        document.getElementById('cat-feedback').innerHTML='<span style="color:#6d28d9;font-size:16px;">🏆 全部配對完成！貓咪高興地喵喵叫～快去挑戰下一個專業吧！</span>';
+        document.getElementById('cat-reset-btn').style.display='inline-block';
+      }
+    } else {
+      sndNo();
+      const s=sel; el.classList.add('wrong'); s.classList.add('wrong');
+      document.getElementById('cat-feedback').innerHTML='<span style="color:#ef4444;">🐱 好像不太對，再試試看！</span>';
+      setTimeout(()=>{ el.classList.remove('wrong'); s.classList.remove('wrong','sel'); },500);
+      sel=null;
+    }
+  }
 })();
 </script></body>
 </html>
