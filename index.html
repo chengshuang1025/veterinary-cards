@@ -567,6 +567,27 @@
       鸚鵡的羽毛分為「正羽」「絨羽」「血羽（生長中）」。血羽含有活躍血管，若在生長期被破壞會大量出血，甚至導致失血過多死亡。每次換羽期間（約每年1～2次）需要特別注意，此時鸚鵡較為敏感，也更容易因打架而傷及血羽。
     </div>
   </div>
+
+  <!-- ===== 小遊戲：鸚鵡是非快問快答 ===== -->
+  <div id="parrot-game" style="margin-top:20px; border-radius:20px; background:linear-gradient(135deg,#ffedd5,#fed7aa); padding:18px; border:2px solid #fdba74;">
+    <div style="text-align:center; margin-bottom:14px;">
+      <div style="font-size:18px; font-weight:900; color:#c2410c;">🎮 小遊戲：鸚鵡照顧大考驗</div>
+      <div style="font-size:12px; color:#7c2d12; margin-top:4px;">兩隻鸚鵡吵架受傷了…<br>小獸醫，你知道怎麼照顧牠們嗎？答對就能幫牠們變健康喔 💕</div>
+    </div>
+    <div id="parrot-q-box" style="display:none; background:white; border-radius:14px; padding:16px; text-align:center; box-shadow:0 2px 10px rgba(0,0,0,0.1);">
+      <div id="parrot-progress" style="font-size:11px; color:#9a3412; margin-bottom:8px;"></div>
+      <div id="parrot-question" style="font-size:15px; font-weight:800; color:#7c2d12; line-height:1.6; min-height:48px;"></div>
+      <div style="display:flex; gap:12px; justify-content:center; margin-top:14px;">
+        <button class="parrot-btn" onclick="parrotAnswer(true)" style="background:#22c55e; color:white; border:none; border-radius:16px; padding:12px 28px; font-size:16px; font-weight:800; cursor:pointer; font-family:inherit;">⭕ 對</button>
+        <button class="parrot-btn" onclick="parrotAnswer(false)" style="background:#ef4444; color:white; border:none; border-radius:16px; padding:12px 28px; font-size:16px; font-weight:800; cursor:pointer; font-family:inherit;">❌ 錯</button>
+      </div>
+      <div id="parrot-feedback" style="font-size:14px; font-weight:700; margin-top:12px; min-height:40px; line-height:1.5;"></div>
+    </div>
+    <div style="text-align:center; margin-top:14px;">
+      <button id="parrot-start-btn" onclick="parrotGameStart()" style="background:#c2410c; color:white; border:none; border-radius:20px; padding:10px 28px; font-size:15px; font-weight:800; cursor:pointer; font-family:inherit; box-shadow:0 3px 10px rgba(194,65,12,0.3);">🦜 開始考驗！</button>
+      <button id="parrot-reset-btn" onclick="parrotGameStart()" style="display:none; background:#6b7280; color:white; border:none; border-radius:20px; padding:8px 20px; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit;">🔄 再玩一次</button>
+    </div>
+  </div>
 </div>
 
 <!-- ===== CARD 5: HIPPO TEETH ===== -->
@@ -1161,6 +1182,67 @@
       setTimeout(()=>btn.classList.remove('t-wrong'), 500);
     }
   }
+})();
+</script>
+<style>
+@media print { #parrot-game { display:none !important; } }
+.parrot-btn { transition: transform 0.15s; }
+.parrot-btn:hover { transform: translateY(-2px); }
+</style>
+<script>
+(function(){
+  const quiz = [
+    { q:'鸚鵡打架受傷了，要先把牠們「分開」，不讓牠們繼續吵架。這樣做對嗎？', a:true,  ok:'答對了！先把牠們分開，牠們才不會越吵越受傷 🕊️', no:'' },
+    { q:'發現「血羽」流血時，可以自己動手把羽毛拔掉。這樣做對嗎？', a:false, ok:'', no:'不可以喔！血羽裡有血管，要交給獸醫處理才安全 🩸' },
+    { q:'鸚鵡傷口一直流血，可以用乾淨的紗布輕輕壓住止血。對嗎？', a:true,  ok:'好棒！輕輕壓住就能幫牠止血，再趕快去看醫生 🩹', no:'' },
+    { q:'鸚鵡受傷後如果低著頭、羽毛縮起來、不吃東西，可以再等等看。對嗎？', a:false, ok:'', no:'不行喔！這代表牠很不舒服，要趕快送醫院 🏥' },
+    { q:'讓每隻鸚鵡有足夠的空間和自己的食盆，可以減少牠們打架。對嗎？', a:true,  ok:'聰明！空間夠大、食盆夠多，鸚鵡就會相親相愛 🥰', no:'' },
+  ];
+  let cur=0, score=0, active=false;
+
+  function sndOK(){const c=new(window.AudioContext||window.webkitAudioContext)();[0,80,160].forEach(d=>{setTimeout(()=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);const f=500+Math.random()*400;o.frequency.setValueAtTime(f,c.currentTime);o.frequency.exponentialRampToValueAtTime(f*1.6,c.currentTime+0.1);g.gain.setValueAtTime(0.15,c.currentTime);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.15);o.start(c.currentTime);o.stop(c.currentTime+0.15);},d);});setTimeout(()=>c.close(),500);}
+  function sndNo(){const c=new(window.AudioContext||window.webkitAudioContext)();const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sawtooth';o.frequency.setValueAtTime(180,c.currentTime);o.frequency.exponentialRampToValueAtTime(100,c.currentTime+0.25);g.gain.setValueAtTime(0.12,c.currentTime);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.25);o.start(c.currentTime);o.stop(c.currentTime+0.25);setTimeout(()=>c.close(),400);}
+  function sndWin(){const c=new(window.AudioContext||window.webkitAudioContext)();const n=[523,587,659,698,784,880,988,1047,1047,1319],t=[0,0.13,0.26,0.39,0.52,0.65,0.78,0.91,1.05,1.05],d=[0.12,0.12,0.12,0.12,0.12,0.12,0.12,0.18,0.18,0.5];n.forEach((f,i)=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sine';o.frequency.value=f;const tt=c.currentTime+t[i];g.gain.setValueAtTime(0,tt);g.gain.linearRampToValueAtTime(0.18,tt+0.02);g.gain.exponentialRampToValueAtTime(0.001,tt+d[i]);o.start(tt);o.stop(tt+d[i]+0.05);});[1047,1319,1568].forEach((f,i)=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sine';o.frequency.value=f;const tt=c.currentTime+1.55+i*0.08;g.gain.setValueAtTime(0.12,tt);g.gain.exponentialRampToValueAtTime(0.001,tt+0.6);o.start(tt);o.stop(tt+0.65);});setTimeout(()=>c.close(),2500);}
+
+  function show(){
+    const item=quiz[cur];
+    document.getElementById('parrot-progress').textContent=`第 ${cur+1} / ${quiz.length} 題`;
+    document.getElementById('parrot-question').textContent=item.q;
+    document.getElementById('parrot-feedback').textContent='';
+    document.querySelectorAll('.parrot-btn').forEach(b=>b.disabled=false);
+  }
+  window.parrotGameStart=function(){
+    cur=0;score=0;active=true;
+    document.getElementById('parrot-start-btn').style.display='none';
+    document.getElementById('parrot-reset-btn').style.display='none';
+    document.getElementById('parrot-q-box').style.display='block';
+    show();
+  };
+  window.parrotAnswer=function(ans){
+    if(!active)return;
+    const item=quiz[cur];
+    document.querySelectorAll('.parrot-btn').forEach(b=>b.disabled=true);
+    if(ans===item.a){
+      score++;sndOK();
+      document.getElementById('parrot-feedback').innerHTML=`<span style="color:#16a34a">🎉 ${item.ok}</span>`;
+    } else {
+      sndNo();
+      document.getElementById('parrot-feedback').innerHTML=`<span style="color:#ef4444">🦜 ${item.no||'再想想看喔！'}</span>`;
+    }
+    setTimeout(()=>{
+      cur++;
+      if(cur<quiz.length){ show(); }
+      else{
+        active=false;sndWin();
+        document.getElementById('parrot-q-box').style.display='none';
+        const msg = score===quiz.length
+          ? '🏆 全部答對！鸚鵡們又開心地唱起歌來了！快去挑戰下一個專業吧！'
+          : `✅ 答對 ${score} / ${quiz.length} 題，鸚鵡說再陪你玩一次吧！`;
+        document.getElementById('parrot-feedback').innerHTML=`<span style="color:#c2410c;font-size:16px;">${msg}</span>`;
+        document.getElementById('parrot-reset-btn').style.display='inline-block';
+      }
+    }, 1600);
+  };
 })();
 </script></body>
 </html>
