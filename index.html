@@ -322,7 +322,7 @@
   <div id="fish-game" style="margin-top:20px; border-radius:20px; background:linear-gradient(135deg,#e0f2fe,#bae6fd); padding:18px; border:2px solid #7dd3fc;">
     <div style="text-align:center; margin-bottom:14px;">
       <div style="font-size:18px; font-weight:900; color:#0369a1;">🎮 小遊戲：找找看！魚身上的秘密</div>
-      <div style="font-size:12px; color:#0c4a6e; margin-top:4px;">點一點圖片上正確的部位！</div>
+      <div style="font-size:12px; color:#0c4a6e; margin-top:4px;">小魚兒想考考你～牠的身體藏著好多秘密，點一點找出來吧 🫧</div>
     </div>
     <div id="fish-game-wrap" style="position:relative; display:inline-block; width:100%; text-align:center;">
       <img id="fish-game-img" src="" alt="魚類構造遊戲圖" style="max-width:100%; border-radius:12px; display:block; margin:0 auto;">
@@ -483,7 +483,7 @@
   <div id="turtle-game" style="margin-top:20px; border-radius:20px; background:linear-gradient(135deg,#ccfbf1,#99f6e4); padding:18px; border:2px solid #5eead4;">
     <div style="text-align:center; margin-bottom:14px;">
       <div style="font-size:18px; font-weight:900; color:#0f766e;">🎮 小遊戲：小獸醫出任務！</div>
-      <div style="font-size:12px; color:#134e4a; margin-top:4px;">烏龜受傷了！照正確的順序，一步一步點出急救步驟！</div>
+      <div style="font-size:12px; color:#134e4a; margin-top:4px;">哎呀！小烏龜從高高的石頭上摔下來，龜殼裂開了，牠痛得縮成一團…<br>小獸醫，只有你能救牠！照順序輕輕點出急救步驟吧 💕</div>
     </div>
 
     <!-- 已排好的答案區 -->
@@ -923,11 +923,11 @@
 <script>
 (function(){
   const questions=[
-    {id:'eye',   q:'👀 魚用什麼來看東西？點點看正確的部位！',ok:'正確！魚的眼睛和人一樣用來看東西 👀'},
-    {id:'gill',  q:'💨 魚沒有肺，牠用什麼呼吸？找一找！',   ok:'答對了！魚鰓可以從水裡取得氧氣 🌊'},
-    {id:'dorsal',q:'🦈 魚背上那片「鰭」叫什麼？點點看！',   ok:'讚！背鰭幫助魚保持平衡不翻倒 🐟'},
-    {id:'tail',  q:'🏊 魚靠哪個部位在水裡游動最快？',       ok:'超棒！尾鰭就像魚的引擎，推動牠前進 💨'},
-    {id:'gut',   q:'🍽️ 魚肚子裡幫助消化食物的器官在哪裡？',ok:'答對！魚的腸負責消化和吸收營養 ✨'},
+    {id:'eye',   q:'👀 魚用什麼來看東西？點點看正確的部位！',ok:'答對了！小魚用圓圓的眼睛看世界 👀'},
+    {id:'gill',  q:'💨 魚沒有肺，牠用什麼呼吸？找一找！',   ok:'好聰明！魚鰓就像小魚的鼻子，在水裡呼吸 🌊'},
+    {id:'dorsal',q:'🦈 魚背上那片「鰭」叫什麼？點點看！',   ok:'找到了！背鰭讓小魚游泳不會翻跟斗 🐟'},
+    {id:'tail',  q:'🏊 魚靠哪個部位在水裡游動最快？',       ok:'哇！尾鰭一甩一甩，小魚咻～地游好快 💨'},
+    {id:'gut',   q:'🍽️ 魚肚子裡幫助消化食物的器官在哪裡？',ok:'答對了！肚子裡的腸腸把食物變成營養 ✨'},
   ];
   let current=0,score=0,gameActive=false;
   window.addEventListener('DOMContentLoaded',()=>{
@@ -1018,14 +1018,14 @@
           getDots().forEach(d=>d.style.display='none');
           document.getElementById('fish-question').textContent='';
           document.getElementById('fish-progress').textContent='';
-          const msg=score===questions.length?'🏆 你真棒！挑戰下一個專業吧！':`✅ 答對 ${score} / ${questions.length} 題，再練習看看吧！`;
+          const msg=score===questions.length?'🏆 太厲害了！小魚們都游出來為你歡呼！快去挑戰下一個專業吧！':`✅ 答對 ${score} / ${questions.length} 題，小魚說再陪你練習一次吧！`;
           document.getElementById('fish-feedback').innerHTML=`<span style="color:#0369a1;font-size:16px;">${msg}</span>`;
           document.getElementById('fish-reset-btn').style.display='inline-block';
         }
       },1200);
     }else{
       soundWrong();dot.classList.add('dot-wrong');
-      document.getElementById('fish-feedback').innerHTML=`<span style="color:#ef4444">❌ 再試一次！</span>`;
+      document.getElementById('fish-feedback').innerHTML=`<span style="color:#ef4444">🐠 咦，不是這裡喔～再找找看！</span>`;
       setTimeout(()=>dot.classList.remove('dot-wrong'),500);
     }
   });
@@ -1059,11 +1059,11 @@
 <script>
 (function(){
   const steps = [
-    { emoji:'🏠', text:'立刻將烏龜移到安靜、溫暖的環境，避免繼續受到撞擊。' },
-    { emoji:'💧', text:'用乾淨的生理食鹽水輕輕沖洗傷口，去除泥土與雜物。' },
-    { emoji:'🩹', text:'用無菌紗布輕覆破裂處，不可用含酒精的消毒液碰傷口。' },
-    { emoji:'🚑', text:'若有出血，輕壓止血後立即送醫，不可自行縫合。' },
-    { emoji:'🏥', text:'獸醫使用骨科膠或特殊修補材料固定龜殼。' },
+    { emoji:'🏠', text:'先把小烏龜輕輕抱到安靜又暖和的小窩，讓牠不再害怕。' },
+    { emoji:'💧', text:'用乾淨的水溫柔地沖一沖傷口，把泥土和小石子洗掉。' },
+    { emoji:'🩹', text:'拿柔軟的紗布輕輕蓋住裂開的地方，就像幫牠蓋小被子。' },
+    { emoji:'🚑', text:'如果流血了，輕輕壓住止血，趕快出發去找獸醫叔叔阿姨！' },
+    { emoji:'🏥', text:'獸醫用神奇的修補膠，把龜殼一片一片黏回去，慢慢養傷。' },
   ];
   let nextIdx = 0, active = false;
 
@@ -1149,15 +1149,15 @@
         active = false;
         sndWin();
         document.getElementById('turtle-pool').style.display='none';
-        document.getElementById('turtle-feedback').innerHTML='<span style="color:#0f766e;">🏆 你真棒！烏龜得救了！挑戰下一個專業吧！</span>';
+        document.getElementById('turtle-feedback').innerHTML='<span style="color:#0f766e;">🏆 太棒了！小烏龜開心地眨眨眼睛：「謝謝你，小獸醫！」快去挑戰下一個專業吧！</span>';
         document.getElementById('turtle-reset-btn').style.display='inline-block';
       } else {
-        document.getElementById('turtle-feedback').innerHTML='<span style="color:#16a34a;">✅ 正確！下一步呢？</span>';
+        document.getElementById('turtle-feedback').innerHTML='<span style="color:#16a34a;">✨ 答對了！小烏龜舒服多了，下一步呢？</span>';
       }
     } else {
       sndWrong();
       btn.classList.add('t-wrong');
-      document.getElementById('turtle-feedback').innerHTML='<span style="color:#ef4444;">❌ 順序不對，再想想看！</span>';
+      document.getElementById('turtle-feedback').innerHTML='<span style="color:#ef4444;">🐢 嗯…好像不是這一步喔，再想想看！</span>';
       setTimeout(()=>btn.classList.remove('t-wrong'), 500);
     }
   }
