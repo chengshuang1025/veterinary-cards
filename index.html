@@ -478,6 +478,32 @@
       龜殼並非獨立的「盔甲」，而是烏龜的<strong>脊椎骨與肋骨演化融合</strong>而成，直接連接神經系統與血管。因此龜殼受損等同於脊椎受傷，必須認真對待。在適當治療下，烏龜龜殼具有一定的自我修復能力，癒合期可能長達 6 個月至 1 年。
     </div>
   </div>
+
+  <!-- ===== 小遊戲：急救順序排排看 ===== -->
+  <div id="turtle-game" style="margin-top:20px; border-radius:20px; background:linear-gradient(135deg,#ccfbf1,#99f6e4); padding:18px; border:2px solid #5eead4;">
+    <div style="text-align:center; margin-bottom:14px;">
+      <div style="font-size:18px; font-weight:900; color:#0f766e;">🎮 小遊戲：小獸醫出任務！</div>
+      <div style="font-size:12px; color:#134e4a; margin-top:4px;">烏龜受傷了！照正確的順序，一步一步點出急救步驟！</div>
+    </div>
+
+    <!-- 已排好的答案區 -->
+    <div id="turtle-answer-zone" style="display:none; margin-bottom:12px;">
+      <div style="font-size:12px; font-weight:800; color:#0f766e; margin-bottom:6px;">✅ 已完成的步驟：</div>
+      <div id="turtle-answers" style="display:flex; flex-direction:column; gap:6px;"></div>
+    </div>
+
+    <!-- 待選卡片區 -->
+    <div id="turtle-pool" style="display:none; flex-direction:column; gap:8px;"></div>
+
+    <!-- 回饋區 -->
+    <div id="turtle-feedback" style="text-align:center; font-size:15px; font-weight:800; margin-top:12px; min-height:26px;"></div>
+
+    <!-- 按鈕 -->
+    <div style="text-align:center; margin-top:10px;">
+      <button id="turtle-start-btn" onclick="turtleGameStart()" style="background:#0f766e; color:white; border:none; border-radius:20px; padding:10px 28px; font-size:15px; font-weight:800; cursor:pointer; font-family:inherit; box-shadow:0 3px 10px rgba(15,118,110,0.3);">🐢 開始任務！</button>
+      <button id="turtle-reset-btn" onclick="turtleGameStart()" style="display:none; background:#6b7280; color:white; border:none; border-radius:20px; padding:8px 20px; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit;">🔄 再玩一次</button>
+    </div>
+  </div>
 </div>
 
 <!-- ===== CARD 4: PARROT FEATHER ===== -->
@@ -1003,6 +1029,138 @@
       setTimeout(()=>dot.classList.remove('dot-wrong'),500);
     }
   });
+})();
+</script>
+<style>
+.turtle-step-card {
+  background: white; border: 2px solid #5eead4; border-radius: 12px;
+  padding: 10px 14px; font-size: 13px; color: #134e4a; cursor: pointer;
+  display: flex; align-items: center; gap: 10px; text-align: left;
+  transition: transform 0.15s, box-shadow 0.15s; font-family: inherit; width: 100%;
+  line-height: 1.5;
+}
+.turtle-step-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(15,118,110,0.2); }
+.turtle-step-card .t-emoji { font-size: 22px; flex-shrink: 0; }
+.turtle-step-card.t-wrong { animation: tShake 0.4s ease; border-color: #ef4444; background: #fee2e2; }
+@keyframes tShake { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-6px);} 75%{transform:translateX(6px);} }
+.turtle-answer-card {
+  background: #f0fdfa; border: 2px solid #14b8a6; border-radius: 12px;
+  padding: 8px 14px; font-size: 12.5px; color: #0f766e; font-weight: 700;
+  display: flex; align-items: center; gap: 10px; line-height: 1.5;
+  animation: tSlideIn 0.4s ease;
+}
+@keyframes tSlideIn { 0%{opacity:0; transform:translateY(10px);} 100%{opacity:1; transform:translateY(0);} }
+.turtle-answer-card .t-num {
+  width: 22px; height: 22px; border-radius: 50%; background: #14b8a6; color: white;
+  display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; flex-shrink: 0;
+}
+@media print { #turtle-game { display: none !important; } }
+</style>
+<script>
+(function(){
+  const steps = [
+    { emoji:'🏠', text:'立刻將烏龜移到安靜、溫暖的環境，避免繼續受到撞擊。' },
+    { emoji:'💧', text:'用乾淨的生理食鹽水輕輕沖洗傷口，去除泥土與雜物。' },
+    { emoji:'🩹', text:'用無菌紗布輕覆破裂處，不可用含酒精的消毒液碰傷口。' },
+    { emoji:'🚑', text:'若有出血，輕壓止血後立即送醫，不可自行縫合。' },
+    { emoji:'🏥', text:'獸醫使用骨科膠或特殊修補材料固定龜殼。' },
+  ];
+  let nextIdx = 0, active = false;
+
+  function sndBubble(){
+    const ctx=new(window.AudioContext||window.webkitAudioContext)();
+    [0,80,160].forEach(d=>{setTimeout(()=>{
+      const o=ctx.createOscillator(),g=ctx.createGain();
+      o.connect(g);g.connect(ctx.destination);
+      const f=500+Math.random()*400;
+      o.frequency.setValueAtTime(f,ctx.currentTime);
+      o.frequency.exponentialRampToValueAtTime(f*1.6,ctx.currentTime+0.1);
+      g.gain.setValueAtTime(0.15,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.15);
+      o.start(ctx.currentTime);o.stop(ctx.currentTime+0.15);
+    },d);});
+    setTimeout(()=>ctx.close(),500);
+  }
+  function sndWrong(){
+    const ctx=new(window.AudioContext||window.webkitAudioContext)();
+    const o=ctx.createOscillator(),g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);o.type='sawtooth';
+    o.frequency.setValueAtTime(180,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(100,ctx.currentTime+0.25);
+    g.gain.setValueAtTime(0.12,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.25);
+    o.start(ctx.currentTime);o.stop(ctx.currentTime+0.25);setTimeout(()=>ctx.close(),400);
+  }
+  function sndWin(){
+    const ctx=new(window.AudioContext||window.webkitAudioContext)();
+    const notes=[523,587,659,698,784,880,988,1047,1047,1319];
+    const times=[0,0.13,0.26,0.39,0.52,0.65,0.78,0.91,1.05,1.05];
+    const durs=[0.12,0.12,0.12,0.12,0.12,0.12,0.12,0.18,0.18,0.5];
+    notes.forEach((freq,i)=>{
+      const o=ctx.createOscillator(),g=ctx.createGain();
+      o.connect(g);g.connect(ctx.destination);o.type='sine';o.frequency.value=freq;
+      const t=ctx.currentTime+times[i];
+      g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(0.18,t+0.02);
+      g.gain.exponentialRampToValueAtTime(0.001,t+durs[i]);
+      o.start(t);o.stop(t+durs[i]+0.05);
+    });
+    [1047,1319,1568].forEach((freq,i)=>{
+      const o=ctx.createOscillator(),g=ctx.createGain();
+      o.connect(g);g.connect(ctx.destination);o.type='sine';o.frequency.value=freq;
+      const t=ctx.currentTime+1.55+i*0.08;
+      g.gain.setValueAtTime(0.12,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.6);
+      o.start(t);o.stop(t+0.65);
+    });
+    setTimeout(()=>ctx.close(),2500);
+  }
+
+  window.turtleGameStart = function(){
+    nextIdx = 0; active = true;
+    document.getElementById('turtle-start-btn').style.display='none';
+    document.getElementById('turtle-reset-btn').style.display='none';
+    document.getElementById('turtle-feedback').textContent='';
+    document.getElementById('turtle-answers').innerHTML='';
+    document.getElementById('turtle-answer-zone').style.display='block';
+    const pool = document.getElementById('turtle-pool');
+    pool.innerHTML='';
+    pool.style.display='flex';
+    // 洗牌
+    const shuffled = steps.map((s,i)=>({...s, idx:i})).sort(()=>Math.random()-0.5);
+    shuffled.forEach(s=>{
+      const btn = document.createElement('button');
+      btn.className='turtle-step-card';
+      btn.dataset.idx = s.idx;
+      btn.innerHTML = `<span class="t-emoji">${s.emoji}</span><span>${s.text}</span>`;
+      btn.addEventListener('click', ()=>pickCard(btn));
+      pool.appendChild(btn);
+    });
+  };
+
+  function pickCard(btn){
+    if(!active) return;
+    const idx = parseInt(btn.dataset.idx);
+    if(idx === nextIdx){
+      sndBubble();
+      const s = steps[idx];
+      const done = document.createElement('div');
+      done.className='turtle-answer-card';
+      done.innerHTML = `<span class="t-num">${idx+1}</span><span class="t-emoji">${s.emoji}</span><span>${s.text}</span>`;
+      document.getElementById('turtle-answers').appendChild(done);
+      btn.remove();
+      nextIdx++;
+      if(nextIdx >= steps.length){
+        active = false;
+        sndWin();
+        document.getElementById('turtle-pool').style.display='none';
+        document.getElementById('turtle-feedback').innerHTML='<span style="color:#0f766e;">🏆 你真棒！烏龜得救了！挑戰下一個專業吧！</span>';
+        document.getElementById('turtle-reset-btn').style.display='inline-block';
+      } else {
+        document.getElementById('turtle-feedback').innerHTML='<span style="color:#16a34a;">✅ 正確！下一步呢？</span>';
+      }
+    } else {
+      sndWrong();
+      btn.classList.add('t-wrong');
+      document.getElementById('turtle-feedback').innerHTML='<span style="color:#ef4444;">❌ 順序不對，再想想看！</span>';
+      setTimeout(()=>btn.classList.remove('t-wrong'), 500);
+    }
+  }
 })();
 </script></body>
 </html>
