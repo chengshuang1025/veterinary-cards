@@ -888,6 +888,27 @@
       ✗ 讓牠繼續行走或玩耍，骨折端可能刺穿皮膚造成開放性骨折
     </div>
   </div>
+
+  <!-- ===== 小遊戲：小狗骨折急救對錯 ===== -->
+  <div id="dog-game" style="margin-top:20px; border-radius:20px; background:linear-gradient(135deg,#dcfce7,#bbf7d0); padding:18px; border:2px solid #86efac;">
+    <div style="text-align:center; margin-bottom:14px;">
+      <div style="font-size:18px; font-weight:900; color:#15803d;">🎮 小遊戲：小狗急救大挑戰</div>
+      <div style="font-size:12px; color:#166534; margin-top:4px;">小狗狗被車撞到，腳腳受傷了，好可憐…<br>小獸醫，哪些做法是對的呢？幫幫牠吧 💕</div>
+    </div>
+    <div id="dog-q-box" style="display:none; background:white; border-radius:14px; padding:16px; text-align:center; box-shadow:0 2px 10px rgba(0,0,0,0.1);">
+      <div id="dog-progress" style="font-size:11px; color:#166534; margin-bottom:8px;"></div>
+      <div id="dog-question" style="font-size:15px; font-weight:800; color:#166534; line-height:1.6; min-height:48px;"></div>
+      <div style="display:flex; gap:12px; justify-content:center; margin-top:14px;">
+        <button class="dog-btn" onclick="dogAnswer(true)" style="background:#22c55e; color:white; border:none; border-radius:16px; padding:12px 26px; font-size:15px; font-weight:800; cursor:pointer; font-family:inherit;">⭕ 該這樣</button>
+        <button class="dog-btn" onclick="dogAnswer(false)" style="background:#ef4444; color:white; border:none; border-radius:16px; padding:12px 26px; font-size:15px; font-weight:800; cursor:pointer; font-family:inherit;">❌ 不可以</button>
+      </div>
+      <div id="dog-feedback" style="font-size:14px; font-weight:700; margin-top:12px; min-height:40px; line-height:1.5;"></div>
+    </div>
+    <div style="text-align:center; margin-top:14px;">
+      <button id="dog-start-btn" onclick="dogGameStart()" style="background:#15803d; color:white; border:none; border-radius:20px; padding:10px 28px; font-size:15px; font-weight:800; cursor:pointer; font-family:inherit; box-shadow:0 3px 10px rgba(21,128,61,0.3);">🐕 開始急救！</button>
+      <button id="dog-reset-btn" onclick="dogGameStart()" style="display:none; background:#6b7280; color:white; border:none; border-radius:20px; padding:8px 20px; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit;">🔄 再玩一次</button>
+    </div>
+  </div>
 </div>
 <div class="print-bar">
   <button class="print-btn primary" onclick="window.print()">🖨️ 列印全部圖卡</button>
@@ -1530,6 +1551,67 @@
       setTimeout(()=>btn.classList.remove('m-wrong'),500);
     }
   }
+})();
+</script>
+<style>
+@media print { #dog-game { display:none !important; } }
+.dog-btn { transition:transform 0.15s; }
+.dog-btn:hover { transform:translateY(-2px); }
+</style>
+<script>
+(function(){
+  const quiz = [
+    { q:'小狗腳受傷了，應該讓牠靜靜待著，不要勉強牠走路。', a:true,  ok:'答對了！讓牠乖乖休息，骨頭才不會受更多傷 🦴', no:'' },
+    { q:'看到小狗骨折，可以自己動手把彎彎的腳拉直。', a:false, ok:'', no:'不可以喔！亂拉會更痛更嚴重，要交給獸醫 🚑' },
+    { q:'可以拿柔軟的毛巾輕輕包住小狗，帶去看醫生。', a:true,  ok:'好棒！輕輕包住牠，送醫路上比較安穩 🩹', no:'' },
+    { q:'小狗好像很痛，可以餵牠吃人吃的止痛藥。', a:false, ok:'', no:'千萬不行！人的藥對狗狗有毒，會很危險 ⚠️' },
+    { q:'到醫院後，獸醫會先幫小狗照X光，看看骨頭斷在哪裡。', a:true,  ok:'聰明！照了X光，醫生就知道怎麼幫牠治療 📡', no:'' },
+  ];
+  let cur=0, score=0, active=false;
+
+  function sndOK(){const c=new(window.AudioContext||window.webkitAudioContext)();[0,80,160].forEach(d=>{setTimeout(()=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);const f=500+Math.random()*400;o.frequency.setValueAtTime(f,c.currentTime);o.frequency.exponentialRampToValueAtTime(f*1.6,c.currentTime+0.1);g.gain.setValueAtTime(0.15,c.currentTime);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.15);o.start(c.currentTime);o.stop(c.currentTime+0.15);},d);});setTimeout(()=>c.close(),500);}
+  function sndNo(){const c=new(window.AudioContext||window.webkitAudioContext)();const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sawtooth';o.frequency.setValueAtTime(180,c.currentTime);o.frequency.exponentialRampToValueAtTime(100,c.currentTime+0.25);g.gain.setValueAtTime(0.12,c.currentTime);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.25);o.start(c.currentTime);o.stop(c.currentTime+0.25);setTimeout(()=>c.close(),400);}
+  function sndWin(){const c=new(window.AudioContext||window.webkitAudioContext)();const n=[523,587,659,698,784,880,988,1047,1047,1319],t=[0,0.13,0.26,0.39,0.52,0.65,0.78,0.91,1.05,1.05],d=[0.12,0.12,0.12,0.12,0.12,0.12,0.12,0.18,0.18,0.5];n.forEach((f,i)=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sine';o.frequency.value=f;const tt=c.currentTime+t[i];g.gain.setValueAtTime(0,tt);g.gain.linearRampToValueAtTime(0.18,tt+0.02);g.gain.exponentialRampToValueAtTime(0.001,tt+d[i]);o.start(tt);o.stop(tt+d[i]+0.05);});[1047,1319,1568].forEach((f,i)=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sine';o.frequency.value=f;const tt=c.currentTime+1.55+i*0.08;g.gain.setValueAtTime(0.12,tt);g.gain.exponentialRampToValueAtTime(0.001,tt+0.6);o.start(tt);o.stop(tt+0.65);});setTimeout(()=>c.close(),2500);}
+
+  function show(){
+    const item=quiz[cur];
+    document.getElementById('dog-progress').textContent=`第 ${cur+1} / ${quiz.length} 題`;
+    document.getElementById('dog-question').textContent=item.q;
+    document.getElementById('dog-feedback').textContent='';
+    document.querySelectorAll('.dog-btn').forEach(b=>b.disabled=false);
+  }
+  window.dogGameStart=function(){
+    cur=0;score=0;active=true;
+    document.getElementById('dog-start-btn').style.display='none';
+    document.getElementById('dog-reset-btn').style.display='none';
+    document.getElementById('dog-q-box').style.display='block';
+    show();
+  };
+  window.dogAnswer=function(ans){
+    if(!active)return;
+    const item=quiz[cur];
+    document.querySelectorAll('.dog-btn').forEach(b=>b.disabled=true);
+    if(ans===item.a){
+      score++;sndOK();
+      document.getElementById('dog-feedback').innerHTML=`<span style="color:#16a34a">🎉 ${item.ok}</span>`;
+    } else {
+      sndNo();
+      document.getElementById('dog-feedback').innerHTML=`<span style="color:#ef4444">🐕 ${item.no||'再想想看喔！'}</span>`;
+    }
+    setTimeout(()=>{
+      cur++;
+      if(cur<quiz.length){ show(); }
+      else{
+        active=false;sndWin();
+        document.getElementById('dog-q-box').style.display='none';
+        const msg = score===quiz.length
+          ? '🏆 全部答對！小狗的腳好多了，開心地對你搖搖尾巴！你完成所有專業啦，真是超棒的小獸醫！'
+          : `✅ 答對 ${score} / ${quiz.length} 題，小狗說再陪你練習一次吧！`;
+        document.getElementById('dog-feedback').innerHTML=`<span style="color:#15803d;font-size:16px;">${msg}</span>`;
+        document.getElementById('dog-reset-btn').style.display='inline-block';
+      }
+    }, 1600);
+  };
 })();
 </script></body>
 </html>
