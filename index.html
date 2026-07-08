@@ -728,6 +728,24 @@
       <span class="tag" style="background:#fde68a; color:#78350f;">荷爾蒙數值檢驗</span>
     </div>
   </div>
+
+  <!-- ===== 小遊戲：花豹皮膚診斷 ===== -->
+  <div id="leopard-game" style="margin-top:20px; border-radius:20px; background:linear-gradient(135deg,#fef3c7,#fde68a); padding:18px; border:2px solid #fcd34d;">
+    <div style="text-align:center; margin-bottom:14px;">
+      <div style="font-size:18px; font-weight:900; color:#b45309;">🎮 小遊戲：花豹醫生猜猜看</div>
+      <div style="font-size:12px; color:#78350f; margin-top:4px;">花豹身體怪怪的，一直抓癢…<br>小獸醫，看看牠的樣子，猜猜是怎麼了？ 🔍</div>
+    </div>
+    <div id="leopard-q-box" style="display:none; background:white; border-radius:14px; padding:16px; box-shadow:0 2px 10px rgba(0,0,0,0.1);">
+      <div id="leopard-progress" style="font-size:11px; color:#92400e; margin-bottom:8px; text-align:center;"></div>
+      <div id="leopard-question" style="font-size:15px; font-weight:800; color:#78350f; line-height:1.6; text-align:center; min-height:48px;"></div>
+      <div id="leopard-options" style="display:flex; flex-direction:column; gap:8px; margin-top:14px;"></div>
+      <div id="leopard-feedback" style="font-size:14px; font-weight:700; margin-top:12px; min-height:40px; line-height:1.5; text-align:center;"></div>
+    </div>
+    <div style="text-align:center; margin-top:14px;">
+      <button id="leopard-start-btn" onclick="leopardGameStart()" style="background:#b45309; color:white; border:none; border-radius:20px; padding:10px 28px; font-size:15px; font-weight:800; cursor:pointer; font-family:inherit; box-shadow:0 3px 10px rgba(180,83,9,0.3);">🐆 開始看診！</button>
+      <button id="leopard-reset-btn" onclick="leopardGameStart()" style="display:none; background:#6b7280; color:white; border:none; border-radius:20px; padding:8px 20px; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit;">🔄 再玩一次</button>
+    </div>
+  </div>
 </div>
 
 <!-- ===== CARD 7: MARE BIRTH ===== -->
@@ -1338,6 +1356,90 @@
       setTimeout(()=>{ el.classList.remove('wrong'); s.classList.remove('wrong','sel'); },500);
       sel=null;
     }
+  }
+})();
+</script>
+<style>
+@media print { #leopard-game { display:none !important; } }
+.leo-opt { background:#fffbeb; border:2px solid #fcd34d; border-radius:12px; padding:11px 14px; font-size:13px; color:#78350f; cursor:pointer; text-align:left; font-family:inherit; font-weight:700; line-height:1.4; transition:all 0.15s; }
+.leo-opt:hover { transform:translateY(-2px); box-shadow:0 4px 12px rgba(180,83,9,0.2); }
+.leo-opt.correct { background:#dcfce7; border-color:#16a34a; color:#15803d; }
+.leo-opt.wrong { background:#fee2e2; border-color:#ef4444; color:#b91c1c; }
+.leo-opt:disabled { cursor:default; }
+</style>
+<script>
+(function(){
+  const quiz = [
+    { q:'花豹一直用爪子抓身體，皮膚紅紅的還有小蟲在爬…這可能是什麼呢？',
+      opts:['被蟲蟲咬了（寄生蟲）','肚子餓了','想睡覺了'], ans:0,
+      ok:'答對了！小蟲蟲叫做寄生蟲，會讓花豹好癢好癢 🐛',
+      no:'再看看～牠一直抓癢，還有小蟲在爬喔！' },
+    { q:'花豹的毛一片一片掉下來，露出光禿禿的皮膚，這時候該怎麼辦？',
+      opts:['沒關係不用管','趕快帶去給獸醫看','幫牠剃更多毛'], ans:1,
+      ok:'好棒！掉毛可能是皮膚生病了，要讓獸醫檢查才安心 🩺',
+      no:'掉毛是生病的信號，要交給獸醫幫忙喔！' },
+    { q:'獸醫要幫危險的花豹看病，為了安全，會先做什麼？',
+      opts:['直接抱起來','用麻醉讓牠睡著再治療','放音樂給牠聽'], ans:1,
+      ok:'聰明！先讓花豹睡著，醫生和花豹都安全 😴',
+      no:'花豹很有力氣，要先麻醉讓牠睡著才安全喔！' },
+    { q:'要預防花豹得皮膚病，平常最該做的是什麼？',
+      opts:['保持乾淨、定期檢查','每天餵很多糖果','關在黑黑的地方'], ans:0,
+      ok:'答對了！乾淨的環境和檢查，讓花豹健健康康 ✨',
+      no:'再想想～乾淨和檢查才能讓皮膚不生病喔！' },
+  ];
+  let cur=0, score=0, active=false;
+
+  function sndOK(){const c=new(window.AudioContext||window.webkitAudioContext)();[0,80,160].forEach(d=>{setTimeout(()=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);const f=500+Math.random()*400;o.frequency.setValueAtTime(f,c.currentTime);o.frequency.exponentialRampToValueAtTime(f*1.6,c.currentTime+0.1);g.gain.setValueAtTime(0.15,c.currentTime);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.15);o.start(c.currentTime);o.stop(c.currentTime+0.15);},d);});setTimeout(()=>c.close(),500);}
+  function sndNo(){const c=new(window.AudioContext||window.webkitAudioContext)();const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sawtooth';o.frequency.setValueAtTime(180,c.currentTime);o.frequency.exponentialRampToValueAtTime(100,c.currentTime+0.25);g.gain.setValueAtTime(0.12,c.currentTime);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.25);o.start(c.currentTime);o.stop(c.currentTime+0.25);setTimeout(()=>c.close(),400);}
+  function sndWin(){const c=new(window.AudioContext||window.webkitAudioContext)();const n=[523,587,659,698,784,880,988,1047,1047,1319],t=[0,0.13,0.26,0.39,0.52,0.65,0.78,0.91,1.05,1.05],d=[0.12,0.12,0.12,0.12,0.12,0.12,0.12,0.18,0.18,0.5];n.forEach((f,i)=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sine';o.frequency.value=f;const tt=c.currentTime+t[i];g.gain.setValueAtTime(0,tt);g.gain.linearRampToValueAtTime(0.18,tt+0.02);g.gain.exponentialRampToValueAtTime(0.001,tt+d[i]);o.start(tt);o.stop(tt+d[i]+0.05);});[1047,1319,1568].forEach((f,i)=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sine';o.frequency.value=f;const tt=c.currentTime+1.55+i*0.08;g.gain.setValueAtTime(0.12,tt);g.gain.exponentialRampToValueAtTime(0.001,tt+0.6);o.start(tt);o.stop(tt+0.65);});setTimeout(()=>c.close(),2500);}
+
+  function show(){
+    const item=quiz[cur];
+    document.getElementById('leopard-progress').textContent=`第 ${cur+1} / ${quiz.length} 題`;
+    document.getElementById('leopard-question').textContent=item.q;
+    document.getElementById('leopard-feedback').textContent='';
+    const box=document.getElementById('leopard-options');
+    box.innerHTML='';
+    item.opts.forEach((opt,i)=>{
+      const b=document.createElement('button');
+      b.className='leo-opt'; b.textContent=opt;
+      b.addEventListener('click',()=>answer(i,b));
+      box.appendChild(b);
+    });
+  }
+  window.leopardGameStart=function(){
+    cur=0;score=0;active=true;
+    document.getElementById('leopard-start-btn').style.display='none';
+    document.getElementById('leopard-reset-btn').style.display='none';
+    document.getElementById('leopard-q-box').style.display='block';
+    show();
+  };
+  function answer(i,btn){
+    if(!active)return;
+    const item=quiz[cur];
+    const btns=document.querySelectorAll('.leo-opt');
+    btns.forEach(b=>b.disabled=true);
+    if(i===item.ans){
+      score++;sndOK();btn.classList.add('correct');
+      document.getElementById('leopard-feedback').innerHTML=`<span style="color:#16a34a">🎉 ${item.ok}</span>`;
+    } else {
+      sndNo();btn.classList.add('wrong');
+      btns[item.ans].classList.add('correct');
+      document.getElementById('leopard-feedback').innerHTML=`<span style="color:#ef4444">🐆 ${item.no}</span>`;
+    }
+    setTimeout(()=>{
+      cur++;
+      if(cur<quiz.length){ show(); }
+      else{
+        active=false;sndWin();
+        document.getElementById('leopard-q-box').style.display='none';
+        const msg = score===quiz.length
+          ? '🏆 全部答對！花豹不癢了，開心地打了個大呵欠～快去挑戰下一個專業吧！'
+          : `✅ 答對 ${score} / ${quiz.length} 題，花豹說再陪你看診一次吧！`;
+        document.getElementById('leopard-feedback').innerHTML=`<span style="color:#b45309;font-size:16px;">${msg}</span>`;
+        document.getElementById('leopard-reset-btn').style.display='inline-block';
+      }
+    }, 1700);
   }
 })();
 </script></body>
