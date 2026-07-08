@@ -818,6 +818,24 @@
       ✦ 小馬出生後 <strong>2 小時</strong>內仍未站立吸奶
     </div>
   </div>
+
+  <!-- ===== 小遊戲：母馬接生順序 ===== -->
+  <div id="mare-game" style="margin-top:20px; border-radius:20px; background:linear-gradient(135deg,#fce7f3,#fbcfe8); padding:18px; border:2px solid #f9a8d4;">
+    <div style="text-align:center; margin-bottom:14px;">
+      <div style="font-size:18px; font-weight:900; color:#be185d;">🎮 小遊戲：半夜的接生任務</div>
+      <div style="font-size:12px; color:#831843; margin-top:4px;">叮鈴鈴～半夜電話響了！「我家母馬要生小馬了！」<br>小獸醫快起床，照順序完成接生任務吧 🐴💕</div>
+    </div>
+    <div id="mare-answer-zone" style="display:none; margin-bottom:12px;">
+      <div style="font-size:12px; font-weight:800; color:#be185d; margin-bottom:6px;">✅ 已完成的步驟：</div>
+      <div id="mare-answers" style="display:flex; flex-direction:column; gap:6px;"></div>
+    </div>
+    <div id="mare-pool" style="display:none; flex-direction:column; gap:8px;"></div>
+    <div id="mare-feedback" style="text-align:center; font-size:15px; font-weight:800; margin-top:12px; min-height:26px;"></div>
+    <div style="text-align:center; margin-top:10px;">
+      <button id="mare-start-btn" onclick="mareGameStart()" style="background:#be185d; color:white; border:none; border-radius:20px; padding:10px 28px; font-size:15px; font-weight:800; cursor:pointer; font-family:inherit; box-shadow:0 3px 10px rgba(190,24,93,0.3);">🐴 出發接生！</button>
+      <button id="mare-reset-btn" onclick="mareGameStart()" style="display:none; background:#6b7280; color:white; border:none; border-radius:20px; padding:8px 20px; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit;">🔄 再玩一次</button>
+    </div>
+  </div>
 </div>
 
 
@@ -1440,6 +1458,77 @@
         document.getElementById('leopard-reset-btn').style.display='inline-block';
       }
     }, 1700);
+  }
+})();
+</script>
+<style>
+@media print { #mare-game { display:none !important; } }
+.mare-step-card { background:white; border:2px solid #f9a8d4; border-radius:12px; padding:10px 14px; font-size:13px; color:#831843; cursor:pointer; display:flex; align-items:center; gap:10px; text-align:left; transition:transform 0.15s,box-shadow 0.15s; font-family:inherit; width:100%; line-height:1.5; }
+.mare-step-card:hover { transform:translateY(-2px); box-shadow:0 4px 12px rgba(190,24,93,0.2); }
+.mare-step-card .m-emoji { font-size:22px; flex-shrink:0; }
+.mare-step-card.m-wrong { animation:mShake 0.4s ease; border-color:#ef4444; background:#fee2e2; }
+@keyframes mShake { 0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);} }
+.mare-answer-card { background:#fdf2f8; border:2px solid #ec4899; border-radius:12px; padding:8px 14px; font-size:12.5px; color:#be185d; font-weight:700; display:flex; align-items:center; gap:10px; line-height:1.5; animation:mSlide 0.4s ease; }
+@keyframes mSlide { 0%{opacity:0;transform:translateY(10px);}100%{opacity:1;transform:translateY(0);} }
+.mare-answer-card .m-num { width:22px; height:22px; border-radius:50%; background:#ec4899; color:white; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; flex-shrink:0; }
+</style>
+<script>
+(function(){
+  const steps = [
+    { emoji:'📞', text:'接到電話！趕快收拾醫療工具和藥品，衝去馬廄。' },
+    { emoji:'🧼', text:'到了以後先把手洗乾淨，檢查母馬的狀況。' },
+    { emoji:'👀', text:'觀察小馬有沒有正確的方向（先出前腳和頭）。' },
+    { emoji:'🤝', text:'輕輕幫忙把小馬接生出來，動作要溫柔。' },
+    { emoji:'🍼', text:'確認小馬會站起來、會喝媽媽的初乳，任務完成！' },
+  ];
+  let nextIdx=0, active=false;
+
+  function sndBubble(){const c=new(window.AudioContext||window.webkitAudioContext)();[0,80,160].forEach(d=>{setTimeout(()=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);const f=500+Math.random()*400;o.frequency.setValueAtTime(f,c.currentTime);o.frequency.exponentialRampToValueAtTime(f*1.6,c.currentTime+0.1);g.gain.setValueAtTime(0.15,c.currentTime);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.15);o.start(c.currentTime);o.stop(c.currentTime+0.15);},d);});setTimeout(()=>c.close(),500);}
+  function sndNo(){const c=new(window.AudioContext||window.webkitAudioContext)();const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sawtooth';o.frequency.setValueAtTime(180,c.currentTime);o.frequency.exponentialRampToValueAtTime(100,c.currentTime+0.25);g.gain.setValueAtTime(0.12,c.currentTime);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.25);o.start(c.currentTime);o.stop(c.currentTime+0.25);setTimeout(()=>c.close(),400);}
+  function sndWin(){const c=new(window.AudioContext||window.webkitAudioContext)();const n=[523,587,659,698,784,880,988,1047,1047,1319],t=[0,0.13,0.26,0.39,0.52,0.65,0.78,0.91,1.05,1.05],d=[0.12,0.12,0.12,0.12,0.12,0.12,0.12,0.18,0.18,0.5];n.forEach((f,i)=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sine';o.frequency.value=f;const tt=c.currentTime+t[i];g.gain.setValueAtTime(0,tt);g.gain.linearRampToValueAtTime(0.18,tt+0.02);g.gain.exponentialRampToValueAtTime(0.001,tt+d[i]);o.start(tt);o.stop(tt+d[i]+0.05);});[1047,1319,1568].forEach((f,i)=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sine';o.frequency.value=f;const tt=c.currentTime+1.55+i*0.08;g.gain.setValueAtTime(0.12,tt);g.gain.exponentialRampToValueAtTime(0.001,tt+0.6);o.start(tt);o.stop(tt+0.65);});setTimeout(()=>c.close(),2500);}
+
+  window.mareGameStart=function(){
+    nextIdx=0;active=true;
+    document.getElementById('mare-start-btn').style.display='none';
+    document.getElementById('mare-reset-btn').style.display='none';
+    document.getElementById('mare-feedback').textContent='';
+    document.getElementById('mare-answers').innerHTML='';
+    document.getElementById('mare-answer-zone').style.display='block';
+    const pool=document.getElementById('mare-pool');
+    pool.innerHTML=''; pool.style.display='flex';
+    const shuffled=steps.map((s,i)=>({...s,idx:i})).sort(()=>Math.random()-0.5);
+    shuffled.forEach(s=>{
+      const btn=document.createElement('button');
+      btn.className='mare-step-card'; btn.dataset.idx=s.idx;
+      btn.innerHTML=`<span class="m-emoji">${s.emoji}</span><span>${s.text}</span>`;
+      btn.addEventListener('click',()=>pick(btn));
+      pool.appendChild(btn);
+    });
+  };
+  function pick(btn){
+    if(!active)return;
+    const idx=parseInt(btn.dataset.idx);
+    if(idx===nextIdx){
+      sndBubble();
+      const s=steps[idx];
+      const done=document.createElement('div');
+      done.className='mare-answer-card';
+      done.innerHTML=`<span class="m-num">${idx+1}</span><span class="m-emoji">${s.emoji}</span><span>${s.text}</span>`;
+      document.getElementById('mare-answers').appendChild(done);
+      btn.remove(); nextIdx++;
+      if(nextIdx>=steps.length){
+        active=false;sndWin();
+        document.getElementById('mare-pool').style.display='none';
+        document.getElementById('mare-feedback').innerHTML='<span style="color:#be185d;">🏆 小馬平安出生了！牠搖搖晃晃站起來喝奶～快去挑戰下一個專業吧！</span>';
+        document.getElementById('mare-reset-btn').style.display='inline-block';
+      } else {
+        document.getElementById('mare-feedback').innerHTML='<span style="color:#16a34a;">✨ 做得好！接下來呢？</span>';
+      }
+    } else {
+      sndNo(); btn.classList.add('m-wrong');
+      document.getElementById('mare-feedback').innerHTML='<span style="color:#ef4444;">🐴 先別急，這一步還沒到喔！</span>';
+      setTimeout(()=>btn.classList.remove('m-wrong'),500);
+    }
   }
 })();
 </script></body>
